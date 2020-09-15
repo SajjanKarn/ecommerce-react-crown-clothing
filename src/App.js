@@ -8,13 +8,37 @@ import ShopPage from "./pages/shoppage/shoppage.component";
 
 import Header from "./components/header/header.component";
 
+import { auth } from "./firebase/firebase.utils";
+
 import "./App.css";
 
 class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      currentUser: null,
+    };
+  }
+
+  unSubscribeUserAuth = null;
+
+  componentDidMount() {
+    this.unSubscribeUserAuth = auth.onAuthStateChanged((user) => {
+      this.setState({ currentUser: user });
+      console.log(this.state.currentUser);
+    });
+  }
+
+  componentWillUnmount() {
+    // close the subscription to avoid memory leaks.
+    this.unSubscribeUserAuth();
+  }
+
   render() {
     return (
       <div className="App">
-        <Header />
+        <Header currentUser={this.state.currentUser} />
         <Switch>
           <Route path="/" exact component={Homepage} />
           <Route path="/shop" exact component={ShopPage} />
