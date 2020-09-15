@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { ReactComponent as Logo } from "../assets/crown.svg.svg";
+import { ReactComponent as Logo } from "../../assets/crown.svg.svg";
 
 import { auth } from "../../firebase/firebase.utils";
 

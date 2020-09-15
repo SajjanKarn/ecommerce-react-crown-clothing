@@ -8,7 +8,7 @@ import ShopPage from "./pages/shoppage/shoppage.component";
 
 import Header from "./components/header/header.component";
 
-import { auth } from "./firebase/firebase.utils";
+import { auth, saveUserInDatabase } from "./firebase/firebase.utils";
 
 import "./App.css";
 
@@ -24,9 +24,24 @@ class App extends Component {
   unSubscribeUserAuth = null;
 
   componentDidMount() {
-    this.unSubscribeUserAuth = auth.onAuthStateChanged((user) => {
-      this.setState({ currentUser: user });
-      console.log(this.state.currentUser);
+    this.unSubscribeUserAuth = auth.onAuthStateChanged(async (userAuth) => {
+      if (userAuth) {
+        const userRef = await saveUserInDatabase(userAuth);
+
+        userRef.onSnapshot((snapShot) => {
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data(),
+            },
+          });
+          
+          console.log(this.state.currentUser);
+        });
+
+      } else {
+        this.setState({ currentUser: userAuth });
+      }
     });
   }
 
